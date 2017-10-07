@@ -17,7 +17,7 @@ echo Logging output to "$LOG"
 T="$(date +%s)"
 
 # Test Net
-python src/test.py --dev ${GPU_DEV} --prototxt ${DEPLOY} --caffemodel ${CAFFE_MODEL} --cfg ${CONFIG_FILE}
+/home/cwh/anaconda2/bin/python src/test.py --dev ${GPU_DEV} --prototxt ${DEPLOY} --caffemodel ${CAFFE_MODEL} --cfg ${CONFIG_FILE}
 
 T="$(($(date +%s)-T))"
 echo "Time in seconds: ${T}"

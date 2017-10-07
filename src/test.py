@@ -8,6 +8,7 @@
     @contact: daniel.onoro@edu.uah.es
     @date: 27/02/2015
 '''
+from scipy.misc import imsave
 
 """
 Test script. This code performs a test over with a pre trained model over the
@@ -67,7 +68,7 @@ class CaffePredictor:
         for ix, p in enumerate(pos):
             # Compute displacement from centers
             dx=dy=int(base_pw/2)
-    
+
             # Get roi
             x,y=p
             sx=slice(x-dx,x+dx+1,None)
@@ -89,7 +90,7 @@ class CaffePredictor:
             # Take the output from the last layer
             # Access to the last layer of the net, second element of the tuple (layer, caffe obj)
             pred = self.net.blobs.items()[-1][1].data
-            
+
             # Make it squared
             p_side = int(np.sqrt( len( pred.flatten() ) )) 
             pred = pred.reshape(  (p_side, p_side) )
@@ -107,7 +108,7 @@ class CaffePredictor:
 
         # Average density map
         dens_map = dens_map / count_map        
-        
+
         return dens_map
         
 def gameRec(test, gt, cur_lvl, tar_lvl):
@@ -164,7 +165,7 @@ def gameMetric(test, gt, lvl):
 #===========================================================================
 # Some helpers functions
 #===========================================================================
-def testOnImg(CNN, im, gtdots, pw, mask = None):
+def testOnImg(CNN, im, gtdots, pw, mask = None, name=''):
     
     # Process Image
     resImg = CNN.process(im, pw) 
@@ -173,9 +174,9 @@ def testOnImg(CNN, im, gtdots, pw, mask = None):
     if mask is not None:
         resImg = resImg * mask
         gtdots = gtdots * mask
-
     npred=resImg.sum()
     ntrue=gtdots.sum()
+    imsave('%s-%.1f-%.1f.jpg' % (name.split('.')[0], npred, ntrue), resImg)
 
     return ntrue,npred,resImg,gtdots
 
@@ -379,7 +380,7 @@ def main(argv):
                 mask = mask.get('BW')
         
         s=time.time()
-        ntrue,npred,resImg,gtdots=testOnImg(CNN, im, dens_im, pw, mask)
+        ntrue,npred,resImg,gtdots=testOnImg(CNN, im, dens_im, pw, mask, name)
         print "image : %d , ntrue = %.2f ,npred = %.2f , time =%.2f sec"%(count,ntrue,npred,time.time()-s)
     
         # Keep individual predictions
